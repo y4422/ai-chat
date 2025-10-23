@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Chat with OpenAI Vector Store
 
-## Getting Started
+Next.js アプリで OpenAI の Responses API とベクターストア検索を組み合わせたチャット UI を提供します。既存のベクターストアにドキュメントを格納しておけば、チャットから関連ドキュメントを自動で検索し、回答生成に活用できます。
 
-First, run the development server:
+## セットアップ
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. 依存関係をインストールします。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   npm install
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. 環境変数ファイルを作成します。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
-## Learn More
+3. `.env.local` を編集して、最低限 `OPENAI_API_KEY` を設定します。ベクターストアを利用する場合は `OPENAI_VECTOR_STORE_ID` も設定してください。必要に応じて `OPENAI_MODEL` や `OPENAI_DEFAULT_INSTRUCTIONS` を上書きできます。
 
-To learn more about Next.js, take a look at the following resources:
+4. 開発サーバーを起動します。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. ブラウザで [http://localhost:3000](http://localhost:3000) を開き、チャットを開始します。
 
-## Deploy on Vercel
+## ベクターストアについて
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- OpenAI ダッシュボードや API でベクターストアを作成し、ファイルをアップロードします。参考: OpenAI ドキュメント「File Search」および「Vector Stores」。
+- `.env.local` の `OPENAI_VECTOR_STORE_ID` に対象の ID (`vs_...`) を設定すると、チャット時にファイル検索が自動で有効化されます。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## プロジェクト構成
+
+- `src/app/page.tsx` — チャット UI。クライアント側でメッセージ履歴を管理し、API 経由でモデル呼び出しを行います。
+- `src/app/api/chat/route.ts` — OpenAI Responses API へのサーバーサイドエンドポイント。会話履歴とベクターストア ID を渡して応答を生成します。
+- `.env.local.example` — 必要な環境変数のサンプル。
+
+## 追加メモ
+
+- OpenAI API へのリクエストは `gpt-4o-mini` を既定モデルとして使用しています。別モデルを使う場合は `.env.local` で `OPENAI_MODEL` を指定してください。
+- サーバーログに API エラーを出力し、クライアント側では簡潔なエラーメッセージを表示します。
+
+## ライセンス
+
+プロジェクトのライセンスは別途指定がない限り未設定です。必要に応じて `LICENSE` ファイルを追加してください。
